@@ -1,0 +1,25 @@
+from sklearn.linear_model import LogisticRegression,RidgeClassifier
+
+rreg = RidgeClassifier(alpha=.8,solver='sag')
+lass = Lasso(alpha=.01)
+rf = RandomForestClassifier(max_depth=20, random_state=0, n_estimators=100)
+svm = LinearSVC(penalty='l2',max_iter=10000)
+svm = SVC(kernel='linear',max_iter=10000)
+
+
+rreg.fit(X_train, Y_train)
+Y_pred = rreg.predict(X_test)
+print(sklearn.metrics.classification_report(Y_test,Y_pred))
+
+
+lass.fit(X_train, Y_train)
+Y_pred = list(map(lambda x: x>=.5, lass.predict(X_test)))
+print(sklearn.metrics.classification_report(Y_test,Y_pred))
+
+rf.fit(X_train, Y_train)
+Y_pred = rf.predict(X_test)
+print(sklearn.metrics.classification_report(Y_test,Y_pred)
+
+svm.fit(X_train, Y_train)
+Y_pred = svm.predict(X_test)
+print(sklearn.metrics.classification_report(Y_test,Y_pred))
