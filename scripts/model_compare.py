@@ -225,7 +225,7 @@ svm = SVC(kernel='linear',max_iter=100)
 nb = GaussianNB()
 nb2 = MultinomialNB()
 dtc = DecisionTreeClassifier()
-logreg = LogisticRegression()
+logreg = LogisticRegression(C=1)
 sgd = SGDClassifier()
 gbc = GradientBoostingClassifier()
 
@@ -248,6 +248,14 @@ print("confusion matrix for the data:")
 print(confusion_matrix(y_test, Y_pred))
 print(classification_report(y_test,Y_pred))
 
+for c in [0.01, 0.05, 0.25, 0.5, 1]:
+    
+    lr = LogisticRegression(C=c)
+    lr.fit(X_train, y_train)
+    print ("Accuracy for C=%s: %s" 
+        % (c, accuracy_score(y_test, lr.predict(X_test))))
+
+
 
 print("\n\nLasso classifier\n")
 lass.fit(X_train,y_train)
@@ -269,7 +277,7 @@ print("confusion matrix for the data:")
 print(confusion_matrix(y_test, Y_pred))
 print(classification_report(y_test,Y_pred))
 
-
+'''
 print("\n\nGaussian Bayes classifier\n")
 nb.fit(X_train,y_train)
 Y_pred = nb.predict(X_test)
@@ -306,11 +314,11 @@ print(accuracy_score(y_test, Y_pred))
 print("confusion matrix for the data:")
 print(confusion_matrix(y_test, Y_pred))
 print(classification_report(y_test,Y_pred))
-
+'''
 
 #selecting ridgeclassifier as model
 print("\n\nRidge classifier\n")
-ridgemodel = RidgeClassifier()
+ridgemodel = RidgeClassifier(alpha=1)
 ridgemodel.fit(X_train, y_train)
 
 y_pred = ridgemodel.predict(X_test)
@@ -320,6 +328,14 @@ print(accuracy_score(y_test, y_pred))
 print("confusion matrix for the data:")
 print(confusion_matrix(y_test, y_pred))
 print(classification_report(y_test,y_pred))
+
+'''
+for c in [0.01, 0.05, 0.25, 0.5, 1]:
+    
+    ridg = RidgeClassifier(alpha=c)
+    ridg.fit(X_train, y_train)
+    print ("Accuracy for C=%s: %s" 
+        % (c, accuracy_score(y_test, ridg.predict(X_test))))
 
 
 print("\n\nStochastic Gradient Descent classifier\n")
@@ -340,11 +356,12 @@ print(accuracy_score(y_test, Y_pred))
 print("confusion matrix for the data:")
 print(confusion_matrix(y_test, Y_pred))
 print(classification_report(y_test,Y_pred))
-
+'''
 
 # using majority voting technique for all models
 print("\n\n\n majority voting technique\n")
 
+#testing combinations
 modelnames = [('LogisticRegression',logreg),
 		('SGDClassifier',sgd),
 		('Gradientboosting',gbc),
@@ -352,7 +369,12 @@ modelnames = [('LogisticRegression',logreg),
 		('MultinomialNB',nb2),
 		('RidgeClassifier',ridgemodel)]
 
-vc = VotingClassifier(voting = 'hard',estimators=modelnames)
+modelnames2 = [('LogisticRegression',logreg),
+                ('MultinomialNB',nb2),
+                ('RidgeClassifier',ridgemodel)]
+
+
+vc = VotingClassifier(voting = 'hard',estimators=modelnames2)
 vc.fit(X_train,y_train)
 Y_pred = vc.predict(X_test)
 
@@ -360,3 +382,10 @@ print("Accuracy score is:")
 print(accuracy_score(y_test,Y_pred))
 print(classification_report(y_test,Y_pred))
 print(confusion_matrix(y_test,Y_pred))
+
+
+sample_submission = pd.read_csv("dataset/sample_submission.csv")
+sample_submission["target"] = vc.predict(test)
+sample_submission.head()
+sample_submission.to_csv("submission.csv", index=False)
+
