@@ -22,20 +22,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import keras 
 
 
-#import the test data
-#test_df = pd.read_csv("dataset/test.csv")
-#print(test_df)
-
-#test = test_df[['text']]
-#test_save = test_df[['text']]
-
-#getting only one text
-#test = test.iloc[0:50,]
-
-
 #testing for individual input
 testdf = pd.DataFrame(columns=['text'])
-str1 = 'hi how are you'
+str1 = input("Enter the tweet: ")
+#str1 = 'hi how are you'
 print(testdf)
 print(str1)
 test = testdf.append({'text': str(str1)}, ignore_index=True)
@@ -72,8 +62,8 @@ print("\nafter calculating counts\n")
 print(test)
 
 # removing the stopwords from the tweets
-print("downloading stopwords...") 
-nltk.download('stopwords')
+#print("downloading stopwords...") 
+#nltk.download('stopwords')
 stop = set(stopwords.words('english'))
 
 
@@ -122,7 +112,7 @@ print(test)
 #vectorizing the text using tfid vectorizer
 vectorizer = TfidfVectorizer()
 
-Xtrain = pd.read_csv("../temp/disaster_tweet_classifier/temp/xtrain_vectorizer.csv")
+Xtrain = pd.read_csv("xtrain_vectorizer.csv")
 
 XX = vectorizer.fit(Xtrain['newt'])
 X=XX.transform(Xtrain['newt'])
@@ -148,4 +138,31 @@ print("\nvectorization completed...\n")
 #print(test)
 
 test.to_csv("preprocessed_test.csv")
+
+
+
+#restoring
+
+import os
+from sklearn.metrics import confusion_matrix,accuracy_score
+import numpy as np
+
+x_test = pd.read_csv("preprocessed_test.csv")
+#print(x_test.head())
+#print(x_test.columns)
+
+x_test = x_test.drop(["Unnamed: 0"],axis=1)
+x_test.dropna()
+
+# Load the Model back from file
+with open("mymodel", 'rb') as file:  
+    model = pickle.load(file)
+
+new_pred = model.predict(x_test)
+#print(new_pred)
+
+c = np.where(new_pred > 0,"This is a Disaster related tweet","This is a Non-Disaster tweet")
+print("\n\n")
+print(c)
+print("\n\n")
 

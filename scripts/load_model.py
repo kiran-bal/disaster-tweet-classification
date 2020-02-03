@@ -4,7 +4,7 @@ import os
 from sklearn.metrics import confusion_matrix,accuracy_score
 import numpy as np
 
-x_test = pd.read_csv("temp/preprocessed_test.csv")
+x_test = pd.read_csv("preprocessed_test.csv")
 #print(x_test.head())
 #print(x_test.columns)
 
