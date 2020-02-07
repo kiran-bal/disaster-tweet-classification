@@ -23,7 +23,7 @@ test['newt']=cleante
 print("\nafter removing stop word\n")
 print(test)
 
-#remove urls from text
+#remove urls from text	
 url=[]
 for s in cleante:
     url.append(re.findall('http[s]?://.*',s))
