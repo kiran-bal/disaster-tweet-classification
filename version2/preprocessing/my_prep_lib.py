@@ -50,7 +50,7 @@ def replaceMulStop(text):
 	return text
 
 def countMulExcl(text):
-	#Replaces repetitions of exlamation marks
+	#count repetitions of exlamation marks
 	return len(re.findall(r"(\!)\1+", text))
 
 def countMulQues(text):
@@ -62,12 +62,12 @@ def countMulStop(text):
 	return len(re.findall(r"(\.)\1+", text))
 
 def countElongated(text):
-	#Input: a text, Output: how many words are elongated
+	#count of how many words are elongated
 	regex = re.compile(r"(.)\1{2}")
 	return len([word for word in text.split() if regex.search(word)])
 
 def countAllCaps(text):
-	#Input: a text, Output: how many words are all caps
+	#count of how many words are all caps
 	return len(re.findall("[A-Z0-9]{3,}", text))
 
 #Creates a dictionary with slangs and their equivalents and replaces them
@@ -75,13 +75,29 @@ with open('slang.txt') as file:
 	slang_map = dict(map(str.strip, line.partition('\t')[::2])
 	for line in file if line.strip())
 
-slang_words = sorted(slang_map, key=len, reverse=True) # longest first for regex
+slang_words = sorted(slang_map, key=len, reverse=True)
 regex = re.compile(r"\b({})\b".format("|".join(map(re.escape, slang_words))))
 replaceSlang = partial(regex.sub, lambda m: slang_map[m.group(1)])
 
+#punctuation list for replacing
+
+puncts = [',', '.', '"', ':', ')', '(', '-', '|', ';', "'", '$', '&', '/', '[', ']', '%', '=', '*', '+', '\\', '•',  '~', '£', 
+ '·', '_', '{', '}', '©', '^', '®', '`', '→', '°', '€', '™', '›',  '♥', '←', '×', '§', '″', '′', 'Â', '█', '½', 'à', '…', 
+ '“', '★', '”', '–', '●', 'â', '►', '−', '¢', '²', '¬', '░', '¶', '↑', '±', '¿', '▾', '═', '¦', '║', '―', '¥', '▓', '—', '‹', '─', 
+ '▒', '：', '¼', '⊕', '▼', '▪', '†', '■', '’', '▀', '¨', '▄', '♫', '☆', 'é', '¯', '♦', '¤', '▲', 'è', '¸', '¾', 'Ã', '⋅', '‘', '∞', 
+ '∙', '）', '↓', '、', '│', '（', '»', '，', '♪', '╩', '╚', '³', '・', '╦', '╣', '╔', '╗', '▬', '❤', 'ï', 'Ø', '¹', '≤', '‡', '√', ]
+
+def removePuncts(x):
+	x = str(x)
+	for punct in puncts:
+		if punct in x:
+			x = x.replace(punct, f' ')
+	return x
+
+
 
 def countSlang(text):
-	# Input: a text, Output: how many slang words and a list of found slangs
+	# counts how many slang words and a list of found slangs
 	slangCounter = 0
 	slangsFound = []
 	tokens = nltk.word_tokenize(text)
@@ -92,7 +108,7 @@ def countSlang(text):
 	return slangCounter, slangsFound
 
 #Replaces contractions from a string to their equivalents
-contraction_patterns = [ (r'won\'t', 'will not'), (r'can\'t', 'cannot'), (r'i\'m', 'i am'), (r'ain\'t', 'is not'), (r'(\w+)\'ll', '\g<1> will'), (r'(\w+)n\'t', '\g<1> not'),
+contraction_patterns = [ (r'I\'m', 'I am'),(r'won\'t', 'will not'), (r'can\'t', 'cannot'), (r'i\'m', 'i am'), (r'ain\'t', 'is not'), (r'(\w+)\'ll', '\g<1> will'), (r'(\w+)n\'t', '\g<1> not'),
 						 (r'(\w+)\'ve', '\g<1> have'), (r'(\w+)\'s', '\g<1> is'), (r'(\w+)\'re', '\g<1> are'), (r'(\w+)\'d', '\g<1> would'), (r'&', 'and'), (r'dammit', 'damn it'), (r'dont', 'do not'), (r'wont', 'will not') ]
 def replaceContraction(text):
 	patterns = [(re.compile(regex), repl) for (regex, repl) in contraction_patterns]
@@ -101,7 +117,7 @@ def replaceContraction(text):
 	return text
 
 def replaceElongated(word):
-	#Replaces an elongated word with its basic form, unless the word exists in the lexicon
+	#Replaces an elongated word with its basic form
 
 	repeat_regexp = re.compile(r'(\w*)(\w)\2(\w*)')
 	repl = r'\1\2\3'
@@ -159,53 +175,3 @@ def edits2(word):
 	return (e2 for e1 in edits1(word) for e2 in edits1(e1))
 
 ### Spell Correction End ###
-'''
-### Replace Negations Begin ###
-
-def replace(word, pos=None):
-	""" Creates a set of all antonyms for the word and if there is only one antonym, it returns it """
-	antonyms = set()
-	for syn in wordnet.synsets(word, pos=pos):
-	  for lemma in syn.lemmas():
-		for antonym in lemma.antonyms():
-			antonyms.add(antonym.name())
-	if len(antonyms) == 1:
-		return antonyms.pop()
-	else:
-		return None
-
-def replaceNegations(text):
-	""" Finds "not" and antonym for the next word and if found, replaces not and the next word with the antonym """
-	i, l = 0, len(text)
-	words = []
-	while i < l:
-		word = text[i]
-		if word == 'not' and i+1 < l:
-			ant = replace(text[i+1])
-			if ant:
-				words.append(ant)
-				i += 2
-				continue
-		words.append(word)
-	  i += 1
-	return words
-
-### Replace Negations End ###
-
-def addNotTag(text):
-	""" Finds "not,never,no" and adds the tag NEG_ to all words that follow until the next punctuation """
-	transformed = re.sub(r'\b(?:not|never|no)\b[\w\s]+[^\w\s]', 
-	   lambda match: re.sub(r'(\s+)(\w+)', r'\1NEG_\2', match.group(0)), 
-	   text,
-	   flags=re.IGNORECASE)
-	return transformed
-
-def addCapTag(word):
-	""" Finds a word with at least 3 characters capitalized and adds the tag ALL_CAPS_ """
-	if(len(re.findall("[A-Z]{3,}", word))):
-		word = word.replace('\\', '' )
-		transformed = re.sub("[A-Z]{3,}", "ALL_CAPS_"+word, word)
-		return transformed
-	else:
-		return word
-'''

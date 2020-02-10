@@ -288,3 +288,4 @@ yw	you are welcome
 ywa	you are welcome anyway
 zomg	oh my god!
 zzz	sleeping
+u you
