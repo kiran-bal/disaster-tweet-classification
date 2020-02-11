@@ -8,7 +8,13 @@ from nltk.tokenize import word_tokenize
 #including my preprocessing functions
 from my_prep_lib import *
 
-def k_prep(inputText = 'null',c="0"):
+# Set it to None to display all columns in the dataframe
+pd.set_option('display.max_columns', None)
+pd.set_option('display.width', None)
+pd.set_option('display.max_colwidth', -1)
+
+
+def k_prep(inputText = 'null',c=0):
 	
 	if c == "2":
 		text = inputText
@@ -19,6 +25,11 @@ def k_prep(inputText = 'null',c="0"):
 			print(text)
 		else:
 			text = input("\nEnter the tweet: ")
+	
+	#text=inputText
+	print("\nRemove unicode from tweet")
+	text = removeUnicode(text)
+	print(text)
 
 	print("\nReplacing url from tweet")
 	text = replaceURL(text)
@@ -121,8 +132,8 @@ def k_prep(inputText = 'null',c="0"):
 	for txt in text:
 		list1.append(lemma.lemmatize(txt))
 	
-	print(list1)	
-k_prep()
+	print(list1)
+	return list1	
 '''
 def document_vector(doc):
     """Create document vectors by averaging word vectors. Remove out-of-vocabulary words."""
@@ -151,3 +162,9 @@ def myword2vec():
 	print(np.mean(w2v[word_doc], axis=0))
 	'''
 	
+'''
+df = pd.read_csv("../dataset/train.csv")
+df['text'] = df['text'].apply(k_prep)
+print(df['text'])
+'''
+k_prep()
