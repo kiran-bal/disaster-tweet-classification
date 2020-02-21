@@ -26,19 +26,29 @@ w2v = KeyedVectors.load_word2vec_format(filename, binary=False)
 #word_doc = [word for word in word_doc if word in w2v.vocab]
 
 new_df = pd.DataFrame()
-df = pd.read_csv("../dataset/test.csv")
-
-for i in range(30):
+df = pd.read_csv("../dataset/train.csv")
+final_df = []
+missed = []
+for index, row in df.iterrows():
 	l = []
 	#string1 = 'new data has found'
-	print(df['text'][i])
-	string1 = df['text'][i]
-	l.append(string1)
-	l.append(list(document_vector(w2v,string1)))
-	print(l)
-	new_df.append(l)
+	print(row['text'])
+	string1 = row['text']
+	#l.append(string1)
+	try:
+		l.append(list(document_vector(w2v,string1)))
+		print(l)
+	except:
+		l = [0.69671315, 0.049782764, -0.24523668, -0.15872465, -0.0665417, 0.20241983, 0.077576466, 1.9189811, -0.006817713, 0.06951927, -0.4152605, -0.89838743, -3.7327635, -0.049629666, -0.7617386, -0.5561758, -0.9451503, 0.035365578, -1.0393411, 0.2922259, -0.16664228, -0.46666014, 0.35039356, 0.40681368, 0.38142973]
+		missed.append(str(index) + " ")
+	#a_series = pd.Series(l)
+	new_df = new_df.append(l, ignore_index=True)
+
+	#new_df.append(l)
 	print("\n")
 print(new_df)
+print(missed)
+new_df.to_csv("w2v_train_data.csv",index=False)
 	
 #list1 = []
 #list1.append(document_vector(string1))
