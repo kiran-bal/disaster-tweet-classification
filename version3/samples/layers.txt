@@ -48,3 +48,7 @@ model = tf.keras.Sequential([
 #model.compile(optimizer='adam', loss=f1_loss, metrics=['accuracy', f1])
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy',tf.keras.metrics.AUC()])
 model.summary()
+
+embedded_size = 100
+max_features = 10000
+maxlen = 100
