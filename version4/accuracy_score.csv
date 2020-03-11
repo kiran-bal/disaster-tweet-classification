@@ -1,0 +1,9 @@
+No.,Classifier,Accuracy Score 
+1,Naive Bayes,79.5 %
+2,Random Forest,78.2 %
+3,SGD classifier,79.6 %
+4,Gradient Boosting,73.7 %
+5,Ridge Classifier,77.9 %
+6,Logistic Regression,79.9 %
+7,Voting Classifier,79.7 %
+8,Stacking Classifier,80.1 %
