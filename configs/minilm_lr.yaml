@@ -1,0 +1,13 @@
+name: minilm_lr
+model: minilm_lr
+params:
+  model_name: sentence-transformers/all-MiniLM-L6-v2
+  C: 1.0
+seed: 42
+test_size: 0.2
+cv_folds: 5
+use_keyword: true
+preprocess:
+  lowercase: false
+  replace_urls: true
+  replace_mentions: true

@@ -16,3 +16,14 @@ tokenizer_backup
 # OS / editors
 .DS_Store
 .~lock.*
+
+# Training outputs (regenerate with `make train-all`); reports/ is committed
+runs/
+*.joblib
+runs/**/hf/
+
+# Environments
+.venv/
+*.egg-info/
+.ruff_cache/
+.pytest_cache/

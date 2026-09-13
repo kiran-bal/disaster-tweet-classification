@@ -1,0 +1,8 @@
+.venv
+runs
+legacy
+reports
+tests
+.git
+.github
+**/__pycache__

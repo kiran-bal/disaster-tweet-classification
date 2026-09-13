@@ -1,0 +1,17 @@
+name: distilbert
+model: distilbert
+params:
+  model_name: distilbert-base-uncased
+  epochs: 3
+  lr: 3.0e-5
+  batch_size: 32
+  max_length: 64
+  warmup_ratio: 0.06
+seed: 42
+test_size: 0.2
+cv_folds: 5
+use_keyword: true
+preprocess:
+  lowercase: false
+  replace_urls: true
+  replace_mentions: true
